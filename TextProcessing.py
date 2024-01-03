@@ -1,4 +1,5 @@
 from collections import Counter
+from nltk.stem.porter import PorterStemmer
 import re
 import string
 
@@ -8,6 +9,8 @@ import string
         2. Remove digits
         3. Remove punctuation
         4. Remove WhiteSpaces
+        5. Tokenize Data
+        6. Stemming Data ( With Porter Algorithm )
 '''
 
 
@@ -41,7 +44,11 @@ token_counts = count_tokens(tokens)
 
 sorted_tokens = sorted(token_counts.items(), key=lambda x: x[1], reverse=True)
 
-print(tokens)
-
 for token, count in sorted_tokens:
     print(f"{token}: {count} times")
+
+stemmer = PorterStemmer()
+
+singles = [stemmer.stem(token) for token in tokens]
+
+print(singles)
