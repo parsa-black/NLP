@@ -25,20 +25,20 @@ with open('DataSets/TextProcessing.txt', 'r', encoding='utf-8') as file:
     input_str = file.read()
 
 # Convert to lowercase
-result = input_str.lower()
+result_lower = input_str.lower()
 
 # Remove digits
-result = re.sub(r'\d+', '', result)
+result_no_digit= re.sub(r'\d+', '', result_lower)
 
 # Remove punctuation
 translator = str.maketrans('', '', string.punctuation)
-result = result.translate(translator)
+result_no_punctuation = result_no_digit.translate(translator)
 
 # Remove WhiteSpaces
-result = result.strip()
+result_no_whitespace = result_no_punctuation.strip()
 
 # Tokenize Data
-tokens = re.findall(r'\b\w+\b', result)
+tokens = re.findall(r'\b\w+\b', result_no_whitespace)
 
 token_counts = count_tokens(tokens)
 
