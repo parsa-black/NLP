@@ -1,3 +1,4 @@
+from collections import Counter
 import re
 import string
 
@@ -8,6 +9,13 @@ import string
         3. Remove punctuation
         4. Remove WhiteSpaces
 '''
+
+
+def count_tokens(tokens):
+    # Count the occurrences of each token
+    token_counts = Counter(tokens)
+    return token_counts
+
 
 # Read DataSet
 with open('DataSets/TextProcessing.txt', 'r', encoding='utf-8') as file:
@@ -26,4 +34,14 @@ result = result.translate(translator)
 # Remove WhiteSpaces
 result = result.strip()
 
-print(result)
+# Tokenize Data
+tokens = re.findall(r'\b\w+\b', result)
+
+token_counts = count_tokens(tokens)
+
+sorted_tokens = sorted(token_counts.items(), key=lambda x: x[1], reverse=True)
+
+print(tokens)
+
+for token, count in sorted_tokens:
+    print(f"{token}: {count} times")
