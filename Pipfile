@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 numpy = "*"
+nltk = "==3.8.1"
 
 [dev-packages]
 
