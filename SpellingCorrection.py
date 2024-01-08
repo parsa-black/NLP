@@ -38,3 +38,37 @@ s2 = "sitting"
 distance = damerau_levenshtein_distance(s1, s2)
 print(f"Damerau–Levenshtein distance between '{s1}' and '{s2}': {distance}")
 
+
+def load_data(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = file.read().splitlines()
+    return data
+
+
+def calculate_bigram_probabilities(sentences):
+    words = [word_tokenize(sentence.lower()) for sentence in sentences]
+    bigram_list = [list(bigrams(sentence)) for sentence in words]
+    flat_bigrams = [bigram for sublist in bigram_list for bigram in sublist]
+
+    bigram_counts = Counter(flat_bigrams)
+    unigram_counts = Counter([word for sublist in words for word in sublist])
+
+    bigram_probabilities = {}
+    for bigram, count in bigram_counts.items():
+        preceding_word = bigram[0]
+        probability = count / unigram_counts[preceding_word]
+        bigram_probabilities[bigram] = probability
+
+    return bigram_probabilities
+
+
+# Load candidate words and sentences
+candidate_words = load_data('DataSets/SpellingCorrection/Dictionary/dictionary.data')
+sentences_with_misspelling = load_data('DataSets/SpellingCorrection/Dictionary/Text_with_Misspelling.data')
+
+# Calculate bigram probabilities
+bigram_probabilities = calculate_bigram_probabilities(sentences_with_misspelling)
+
+# Print bigram probabilities
+for bigram, probability in bigram_probabilities.items():
+    print(f"Bigram: {bigram}, gitProbability: {probability}")
