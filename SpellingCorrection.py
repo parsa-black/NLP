@@ -71,4 +71,4 @@ bigram_probabilities = calculate_bigram_probabilities(sentences_with_misspelling
 
 # Print bigram probabilities
 for bigram, probability in bigram_probabilities.items():
-    print(f"Bigram: {bigram}, gitProbability: {probability}")
+    print(f"Bigram: {bigram}, Probability: {probability}")
