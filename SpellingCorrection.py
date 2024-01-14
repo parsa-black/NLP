@@ -7,6 +7,7 @@ import re
 # Initialization
 data_path = 'DataSets/SpellingCorrection/DataSet/Dataset.data'
 misspelled_path = 'DataSets/SpellingCorrection/Dictionary/Text_with_Misspelling.data'
+dictionary_path = 'DataSets/SpellingCorrection/Dictionary/dictionary.data'
 lan = enchant.Dict("en_US")
 # lan.check('Hello')
 # lan.suggest('Hello')
@@ -58,6 +59,11 @@ freq_dist = FreqDist(words)
 # for word, frequency in freq_dist.items():
 #     print(f"{word}: {frequency}")
 
+# Assuming Dictionary
+with open(dictionary_path, 'r', encoding='utf-8') as dict_file:
+    dictionary_text = dict_file.read()
+
+dictionary_data = word_tokenize(dictionary_text)
 
 # Misspelling word
 with open(misspelled_path, 'r', encoding='utf-8') as file:
@@ -66,5 +72,12 @@ with open(misspelled_path, 'r', encoding='utf-8') as file:
 pattern = re.compile(r'<ERR targ=([^>]+)>([^<]+)</ERR>')
 matches = pattern.findall(misspelled_data)
 
+
+def clean_word(word):
+    return re.sub(r'[^a-zA-Z0-9]', '', word)
+
+
 for targ, word in matches:
-    print(f"Targ: {targ}, Word: {word}")
+    cleaned_word = clean_word(word)
+    if cleaned_word.lower() not in [clean_word(w).lower() for w in dictionary_data]:
+        print(f"Targ: {targ}, Word: {word}")
