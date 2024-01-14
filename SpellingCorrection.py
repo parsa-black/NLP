@@ -1,3 +1,4 @@
+from collections import Counter
 from nltk import FreqDist
 from nltk.tokenize import word_tokenize
 # nltk.download('punkt')
@@ -51,13 +52,18 @@ print(f"Damerau–Levenshtein distance between '{s1}' and '{s2}': {distance}")
 with open(data_path, 'r', encoding='utf-8') as file:
     data = file.read()
 
-words = word_tokenize(data)
+words = data.split(' ')
+unigram = Counter(words)
+total_length = len(words)
 
-freq_dist = FreqDist(words)
 
-# print("Unigram frequencies:")
-# for word, frequency in freq_dist.items():
-#     print(f"{word}: {frequency}")
+# Calculate unigram probabilities
+def modify_values(value):
+    return value / total_length
+
+
+for key, value in unigram.items():
+    unigram[key] = modify_values(value)
 
 # Assuming Dictionary
 with open(dictionary_path, 'r', encoding='utf-8') as dict_file:
@@ -78,4 +84,5 @@ def clean_word(word):
 for targ, word in matches:
     cleaned_word = clean_word(word)
     if cleaned_word.lower() not in dictionary_set:
-        print(f"Targ: {targ}, Word: {word}")
+        # print(f"Targ: {targ}, Word: {word}")
+        print(f'Error: {word}')
