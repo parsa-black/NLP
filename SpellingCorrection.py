@@ -4,7 +4,8 @@ from nltk.tokenize import word_tokenize
 # nltk.download('punkt')
 import enchant
 
-misspelling_path = 'DataSets/SpellingCorrection/Dictionary/Text_with_Misspelling.data'
+# Initialization
+data_path = 'DataSets/SpellingCorrection/DataSet/Dataset.data'
 lan = enchant.Dict("en_US")
 # lan.check('Hello')
 # lan.suggest('Hello')
@@ -44,8 +45,8 @@ s2 = "sitting"
 distance = damerau_levenshtein_distance(s1, s2)
 print(f"Damerau–Levenshtein distance between '{s1}' and '{s2}': {distance}")
 
-
-with open(misspelling_path, 'r', encoding='utf-8') as file:
+# Unigram Probability
+with open(data_path, 'r', encoding='utf-8') as file:
     data = file.read()
 
 words = word_tokenize(data)
