@@ -61,9 +61,7 @@ freq_dist = FreqDist(words)
 
 # Assuming Dictionary
 with open(dictionary_path, 'r', encoding='utf-8') as dict_file:
-    dictionary_text = dict_file.read()
-
-dictionary_data = word_tokenize(dictionary_text)
+    dictionary_set = set(dict_file.read().split())
 
 # Misspelling word
 with open(misspelled_path, 'r', encoding='utf-8') as file:
@@ -79,5 +77,5 @@ def clean_word(word):
 
 for targ, word in matches:
     cleaned_word = clean_word(word)
-    if cleaned_word.lower() not in [clean_word(w).lower() for w in dictionary_data]:
+    if cleaned_word.lower() not in dictionary_set:
         print(f"Targ: {targ}, Word: {word}")
