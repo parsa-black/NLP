@@ -1,7 +1,13 @@
 from collections import Counter
-from nltk import bigrams
+from nltk import FreqDist
 from nltk.tokenize import word_tokenize
 # nltk.download('punkt')
+import enchant
+
+misspelling_path = 'DataSets/SpellingCorrection/Dictionary/Text_with_Misspelling.data'
+lan = enchant.Dict("en_US")
+# lan.check('Hello')
+# lan.suggest('Hello')
 
 
 def damerau_levenshtein_distance(s1, s2):
@@ -39,36 +45,13 @@ distance = damerau_levenshtein_distance(s1, s2)
 print(f"Damerau–Levenshtein distance between '{s1}' and '{s2}': {distance}")
 
 
-def load_data(file_path):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        data = file.read().splitlines()
-    return data
+with open(misspelling_path, 'r', encoding='utf-8') as file:
+    data = file.read()
 
+words = word_tokenize(data)
 
-def calculate_bigram_probabilities(sentences):
-    words = [word_tokenize(sentence.lower()) for sentence in sentences]
-    bigram_list = [list(bigrams(sentence)) for sentence in words]
-    flat_bigrams = [bigram for sublist in bigram_list for bigram in sublist]
+freq_dist = FreqDist(words)
 
-    bigram_counts = Counter(flat_bigrams)
-    unigram_counts = Counter([word for sublist in words for word in sublist])
-
-    bigram_probabilities = {}
-    for bigram, count in bigram_counts.items():
-        preceding_word = bigram[0]
-        probability = count / unigram_counts[preceding_word]
-        bigram_probabilities[bigram] = probability
-
-    return bigram_probabilities
-
-
-# Load candidate words and sentences
-candidate_words = load_data('DataSets/SpellingCorrection/Dictionary/dictionary.data')
-sentences_with_misspelling = load_data('DataSets/SpellingCorrection/Dictionary/Text_with_Misspelling.data')
-
-# Calculate bigram probabilities
-bigram_probabilities = calculate_bigram_probabilities(sentences_with_misspelling)
-
-# Print bigram probabilities
-for bigram, probability in bigram_probabilities.items():
-    print(f"Bigram: {bigram}, Probability: {probability}")
+print("Unigram frequencies:")
+for word, frequency in freq_dist.items():
+    print(f"{word}: {frequency}")
