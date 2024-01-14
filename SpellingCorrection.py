@@ -1,11 +1,12 @@
-from collections import Counter
 from nltk import FreqDist
 from nltk.tokenize import word_tokenize
 # nltk.download('punkt')
 import enchant
+import re
 
 # Initialization
 data_path = 'DataSets/SpellingCorrection/DataSet/Dataset.data'
+misspelled_path = 'DataSets/SpellingCorrection/Dictionary/Text_with_Misspelling.data'
 lan = enchant.Dict("en_US")
 # lan.check('Hello')
 # lan.suggest('Hello')
@@ -53,6 +54,17 @@ words = word_tokenize(data)
 
 freq_dist = FreqDist(words)
 
-print("Unigram frequencies:")
-for word, frequency in freq_dist.items():
-    print(f"{word}: {frequency}")
+# print("Unigram frequencies:")
+# for word, frequency in freq_dist.items():
+#     print(f"{word}: {frequency}")
+
+
+# Misspelling word
+with open(misspelled_path, 'r', encoding='utf-8') as file:
+    misspelled_data = file.read()
+
+pattern = re.compile(r'<ERR targ=([^>]+)>([^<]+)</ERR>')
+matches = pattern.findall(misspelled_data)
+
+for targ, word in matches:
+    print(f"Targ: {targ}, Word: {word}")
