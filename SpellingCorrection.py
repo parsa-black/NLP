@@ -65,6 +65,28 @@ with open(misspelled_path, 'r', encoding='utf-8') as file:
 pattern = re.compile(r'<ERR targ=([^>]+)>([^<]+)</ERR>')
 matches = pattern.findall(misspelled_data)
 
+
+# Check Method
+def check_edit(str1, str2):     # str1 = Error, str2 = Candidate Correction
+    if len(str1) > len(str2):
+        return 'ins'
+    elif len(str1) < len(str2):
+        return 'del'
+    elif len(str1) == len(str2):
+        word_count = 0
+        for char1, char2 in zip(str1, str2):
+            if char1 != char2:
+                word_count += 1
+        if word_count == 1:
+            return 'sub'
+        elif word_count == 2:
+            return 'trans'
+        else:
+            pass
+    else:
+        pass
+
+
 # print Errors
 # for targ, word in matches:
 #     print(f'Error: {word}')
@@ -75,7 +97,7 @@ def clean_word(word):
     return word.strip()
 
 
-for i in range(len(matches)):
+for i in range(len(matches)//10):
     s1 = clean_word(matches[i][1])
     s2 = clean_word(matches[i][0])
     Candidate_list = lan.suggest(s1)
@@ -83,5 +105,6 @@ for i in range(len(matches)):
     for j in range(len(Candidate_list)):
         Candidate_list[j] = Candidate_list[j].lower()
         distance = damerau_levenshtein_distance(s1, Candidate_list[j])
+        edit_operation = check_edit(s1, Candidate_list[j])
         if distance == 1:
-            print(f"Levenshtein distance between '{s1}' and '{Candidate_list[j]}': {distance}")
+            print(f"Levenshtein distance between '{s1}' and '{Candidate_list[j]}': {distance} and op: {edit_operation}")
