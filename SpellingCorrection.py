@@ -88,31 +88,47 @@ def check_edit(str1, str2):     # str1 = Error, str2 = Candidate Correction
 
 
 # Insertion Confusion Matrix
-def ins_edit_distance(str1, str2):     # str1 = Error, str2 = Candidate Correction
-    for char1, char2 in zip(str1, str2):
+def ins_edit_distance(str1, str2):      # str1 = Error, str2 = Candidate Correction
+    letter = ''
+    for i, (char1, char2) in enumerate(zip(str1, str2)):
         if char1 != char2:
-            return char1
+            # Return both char1 and str1[-1] during an insertion
+            let = str1[i-1] if i > 0 else str1[-1]
+            letter += let
+            letter += char1
+            return letter
 
 
 # Deletion Confusion Matrix
-def del_edit_distance(str1, str2):     # str1 = Error, str2 = Candidate Correction
-    for char1, char2 in zip(str1, str2):
+def del_edit_distance(str1, str2):      # str1 = Error, str2 = Candidate Correction
+    letter = ''
+    for i, (char1, char2) in enumerate(zip(str1, str2)):
         if char1 != char2:
-            return char2
+            # Return both char2 and str2[char2-1] during a deletion
+            let = str2[i-1] if i > 0 else str2[-1]
+            letter += let
+            letter += char2
+            return letter
 
 
 # Substitution Confusion Matrix
 def sub_edit_distance(str1, str2):     # str1 = Error, str2 = Candidate Correction
+    letter = ''
     for char1, char2 in zip(str1, str2):
         if char1 != char2:
-            return char1, char2
+            letter += char1
+            letter += char2
+            return letter
 
 
 # Transposition Confusion Matrix
 def trans_edit_distance(str1, str2):     # str1 = Error, str2 = Candidate Correction
+    letter = ''
     for char1, char2 in zip(str1, str2):
         if char1 != char2:
-            return char1, char2
+            letter += char2
+            letter += char1
+            return letter
 
 
 # print Errors
@@ -135,9 +151,10 @@ def trans_edit_distance(str1, str2):     # str1 = Error, str2 = Candidate Correc
 #         distance = damerau_levenshtein_distance(s1, Candidate_list[j])
 #         edit_operation = check_edit(s1, Candidate_list[j])
 #         if distance == 1:
-#             print(f"Levenshtein distance between '{s1}' and '{Candidate_list[j]}': {distance} and op: {edit_operation}")
+#             print(f"Levenshtein distance between '{s1}' and '{Candidate_list[j]}': {distance} and
+#             op: {edit_operation}")
 
-
+# str1 = Error, str2 = Candidate Correction
 s1 = 'acress'
 s2 = 'caress'
 
