@@ -1,6 +1,4 @@
 from collections import Counter
-from nltk import FreqDist
-from nltk.tokenize import word_tokenize
 # nltk.download('punkt')
 import enchant
 import re
@@ -14,6 +12,7 @@ lan = enchant.Dict("en_US")
 # lan.suggest('Hello')
 
 
+# Damerau-Levenshtein Edit distance
 def damerau_levenshtein_distance(s1, s2):
     """
     Calculate the Damerau–Levenshtein distance between two strings.
@@ -41,13 +40,6 @@ def damerau_levenshtein_distance(s1, s2):
     return d[len_s1][len_s2]
 
 
-# Example usage
-s1 = "kitten"
-s2 = "sitting"
-
-distance = damerau_levenshtein_distance(s1, s2)
-print(f"Damerau–Levenshtein distance between '{s1}' and '{s2}': {distance}")
-
 # Unigram Probability
 with open(data_path, 'r', encoding='utf-8') as file:
     data = file.read()
@@ -65,9 +57,6 @@ def modify_values(value):
 for key, value in unigram.items():
     unigram[key] = modify_values(value)
 
-# Assuming Dictionary
-with open(dictionary_path, 'r', encoding='utf-8') as dict_file:
-    dictionary_set = set(dict_file.read().split())
 
 # Misspelling word
 with open(misspelled_path, 'r', encoding='utf-8') as file:
@@ -76,13 +65,22 @@ with open(misspelled_path, 'r', encoding='utf-8') as file:
 pattern = re.compile(r'<ERR targ=([^>]+)>([^<]+)</ERR>')
 matches = pattern.findall(misspelled_data)
 
+# print Errors
+# for targ, word in matches:
+#     print(f'Error: {word}')
+
 
 def clean_word(word):
-    return re.sub(r'[^a-zA-Z0-9]', '', word)
+    # Remove leading and trailing whitespaces
+    return word.strip()
 
 
-for targ, word in matches:
-    cleaned_word = clean_word(word)
-    if cleaned_word.lower() not in dictionary_set:
-        # print(f"Targ: {targ}, Word: {word}")
-        print(f'Error: {word}')
+for i in range(len(matches)):
+    s1 = clean_word(matches[i][1])
+    s2 = clean_word(matches[i][0])
+    Candidate_list = lan.suggest(s1)
+    print(matches[i])
+    for j in range(len(Candidate_list)):
+        Candidate_list[j] = Candidate_list[j].lower()
+        distance = damerau_levenshtein_distance(s1, Candidate_list[j])
+        print(f"Levenshtein distance between '{s1}' and '{Candidate_list[j]}': {distance}")
