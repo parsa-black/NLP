@@ -87,24 +87,68 @@ def check_edit(str1, str2):     # str1 = Error, str2 = Candidate Correction
         pass
 
 
+# Insertion Confusion Matrix
+def ins_edit_distance(str1, str2):     # str1 = Error, str2 = Candidate Correction
+    for char1, char2 in zip(str1, str2):
+        if char1 != char2:
+            return char1
+
+
+# Deletion Confusion Matrix
+def del_edit_distance(str1, str2):     # str1 = Error, str2 = Candidate Correction
+    for char1, char2 in zip(str1, str2):
+        if char1 != char2:
+            return char2
+
+
+# Substitution Confusion Matrix
+def sub_edit_distance(str1, str2):     # str1 = Error, str2 = Candidate Correction
+    for char1, char2 in zip(str1, str2):
+        if char1 != char2:
+            return char1, char2
+
+
+# Transposition Confusion Matrix
+def trans_edit_distance(str1, str2):     # str1 = Error, str2 = Candidate Correction
+    for char1, char2 in zip(str1, str2):
+        if char1 != char2:
+            return char1, char2
+
+
 # print Errors
 # for targ, word in matches:
 #     print(f'Error: {word}')
 
 
-def clean_word(word):
-    # Remove leading and trailing whitespaces
-    return word.strip()
+# def clean_word(word):
+#     # Remove leading and trailing whitespaces
+#     return word.strip()
+#
+#
+# for i in range(len(matches)//10):
+#     s1 = clean_word(matches[i][1])
+#     s2 = clean_word(matches[i][0])
+#     Candidate_list = lan.suggest(s1)
+#     print(matches[i])
+#     for j in range(len(Candidate_list)):
+#         Candidate_list[j] = Candidate_list[j].lower()
+#         distance = damerau_levenshtein_distance(s1, Candidate_list[j])
+#         edit_operation = check_edit(s1, Candidate_list[j])
+#         if distance == 1:
+#             print(f"Levenshtein distance between '{s1}' and '{Candidate_list[j]}': {distance} and op: {edit_operation}")
 
 
-for i in range(len(matches)//10):
-    s1 = clean_word(matches[i][1])
-    s2 = clean_word(matches[i][0])
-    Candidate_list = lan.suggest(s1)
-    print(matches[i])
-    for j in range(len(Candidate_list)):
-        Candidate_list[j] = Candidate_list[j].lower()
-        distance = damerau_levenshtein_distance(s1, Candidate_list[j])
-        edit_operation = check_edit(s1, Candidate_list[j])
-        if distance == 1:
-            print(f"Levenshtein distance between '{s1}' and '{Candidate_list[j]}': {distance} and op: {edit_operation}")
+s1 = 'acress'
+s2 = 'caress'
+
+edit_op = check_edit(s1, s2)
+if edit_op == 'ins':
+    print(ins_edit_distance(s1, s2))
+elif edit_op == 'del':
+    print(del_edit_distance(s1, s2))
+elif edit_op == 'sub':
+    print(sub_edit_distance(s1, s2))
+elif edit_op == 'trans':
+    print(trans_edit_distance(s1,s2))
+else:
+    pass
