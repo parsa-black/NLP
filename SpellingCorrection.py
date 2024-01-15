@@ -83,4 +83,5 @@ for i in range(len(matches)):
     for j in range(len(Candidate_list)):
         Candidate_list[j] = Candidate_list[j].lower()
         distance = damerau_levenshtein_distance(s1, Candidate_list[j])
-        print(f"Levenshtein distance between '{s1}' and '{Candidate_list[j]}': {distance}")
+        if distance == 1:
+            print(f"Levenshtein distance between '{s1}' and '{Candidate_list[j]}': {distance}")
