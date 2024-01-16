@@ -47,6 +47,14 @@ def damerau_levenshtein_distance(s1, s2):
     return d[len_s1][len_s2]
 
 
+# Misspelling word
+with open(misspelled_path, 'r', encoding='utf-8') as file:
+    misspelled_data = file.read()
+
+pattern = re.compile(r'<ERR targ=([^>]+)>([^<]+)</ERR>')
+matches = pattern.findall(misspelled_data)
+
+
 # Unigram Probability
 with open(data_path, 'r', encoding='utf-8') as file:
     data = file.read()
@@ -55,21 +63,24 @@ words = data.split(' ')
 unigram = Counter(words)
 total_length = len(words)
 
+unique_words = set()
+
+for word in words:
+    # You might want to clean the words (remove punctuation, convert to lowercase, etc.) for better accuracy
+    cleaned_word = word.strip(".,!?'\"()[]{}").lower()
+    unique_words.add(cleaned_word)
+
+# The size of the set will give you the count of distinct words
+distinct_word_count = len(unique_words)
+
 
 # Calculate unigram probabilities
 def modify_values(value):
-    return value / total_length
+    return value / total_length + distinct_word_count
 
 
 for key, value in unigram.items():
     unigram[key] = modify_values(value)
-
-# Misspelling word
-with open(misspelled_path, 'r', encoding='utf-8') as file:
-    misspelled_data = file.read()
-
-pattern = re.compile(r'<ERR targ=([^>]+)>([^<]+)</ERR>')
-matches = pattern.findall(misspelled_data)
 
 
 # Check Method
@@ -175,6 +186,19 @@ def trans_edit_distance(str1, str2):  # str1 = Error, str2 = Candidate Correctio
             return trans_dict[letter] / count_char
 
 
+def calculate_noisy_probability(edit_operation, str1, str2):
+    if edit_operation == 'ins':
+        return ins_edit_distance(str1, str2)
+    elif edit_operation == 'del':
+        return del_edit_distance(str1, str2)
+    elif edit_operation == 'sub':
+        return sub_edit_distance(str1, str2)
+    elif edit_operation == 'trans':
+        return trans_edit_distance(str1, str2)
+    else:
+        return None
+
+
 # print Errors
 # for targ, word in matches:
 #     print(f'Error: {word}')
@@ -185,31 +209,34 @@ def clean_word(word):
     return word.strip()
 
 
-for i in range(len(matches) // 10):
+for i in range(len(matches)):
     s1 = clean_word(matches[i][1])
     s2 = clean_word(matches[i][0])
     Candidate_list = lan.suggest(s1)
+
+    max_prob = 0
+    max_word = ''
+
     print(matches[i])
+
     for j in range(len(Candidate_list)):
         Candidate_list[j] = Candidate_list[j].lower()
         distance = damerau_levenshtein_distance(s1, Candidate_list[j])
         edit_operation = check_edit(s1, Candidate_list[j])
+        unigram_candidate = unigram[Candidate_list[j]] + 1
+
         if distance == 1:
-            if edit_operation == 'ins':
-                Noisy = ins_edit_distance(s1, Candidate_list[j])
-                if Noisy != 0 and Noisy is not None:
-                    print(Noisy)
-            elif edit_operation == 'del':
-                Noisy = del_edit_distance(s1, Candidate_list[j])
-                if Noisy != 0 and Noisy is not None:
-                    print(Noisy)
-            elif edit_operation == 'sub':
-                Noisy = sub_edit_distance(s1, Candidate_list[j])
-                if Noisy != 0 and Noisy is not None:
-                    print(Noisy)
-            elif edit_operation == 'trans':
-                Noisy = trans_edit_distance(s1, Candidate_list[j])
-                if Noisy != 0 and Noisy is not None:
-                    print(Noisy)
-            else:
-                pass
+            Noisy = calculate_noisy_probability(edit_operation, s1, Candidate_list[j])
+            if Noisy is not None and Noisy != 0:
+                if unigram_candidate is not None:
+                    probability = Noisy * unigram_candidate * 10 ** 5
+                    if probability > max_prob:
+                        max_prob = probability
+                        max_word = Candidate_list[j]
+                else:
+                    probability = Noisy * 1 * 10 ** 5
+                    if probability > max_prob:
+                        max_prob = probability
+                        max_word = Candidate_list[j]
+
+    print(max_word)
