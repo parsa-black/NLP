@@ -103,14 +103,16 @@ ins_dict = ast.literal_eval(ins_data)
 # Insertion Confusion Matrix
 def ins_edit_distance(str1, str2):  # str1 = Error, str2 = Candidate Correction
     letter = ''
+    count_char = 0
     for i, (char1, char2) in enumerate(zip(str1, str2)):
         if char1 != char2:
             # Return both char1 and str1[-1] during an insertion
             let = str1[i - 1] if i > 0 else str1[-1]
             letter += let
             letter += char1
+            count_char = data.lower().count(let)
         if letter in ins_dict:
-            return ins_dict[letter]
+            return ins_dict[letter] / count_char
 
 
 # Read the del matrix from the file
@@ -130,7 +132,8 @@ def del_edit_distance(str1, str2):  # str1 = Error, str2 = Candidate Correction
             letter += let
             letter += char2
         if letter in del_dict:
-            return del_dict[letter]
+            count_char = data.lower().count(letter)
+            return del_dict[letter] / count_char
 
 
 # Read the sub matrix from the file
@@ -143,12 +146,14 @@ sub_dict = ast.literal_eval(sub_data)
 # Substitution Confusion Matrix
 def sub_edit_distance(str1, str2):  # str1 = Error, str2 = Candidate Correction
     letter = ''
+    count_char = 0
     for char1, char2 in zip(str1, str2):
         if char1 != char2:
             letter += char1
             letter += char2
+            count_char = data.lower().count(char2)
         if letter in sub_dict:
-            return sub_dict[letter]
+            return sub_dict[letter] / count_char
 
 
 # Read the sub matrix from the file
@@ -166,12 +171,13 @@ def trans_edit_distance(str1, str2):  # str1 = Error, str2 = Candidate Correctio
             letter += char2
             letter += char1
         if letter in trans_dict:
-            return trans_dict[letter]
+            count_char = data.lower().count(letter)
+            return trans_dict[letter] / count_char
 
 
 # print Errors
-for targ, word in matches:
-    print(f'Error: {word}')
+# for targ, word in matches:
+#     print(f'Error: {word}')
 
 
 def clean_word(word):
@@ -190,22 +196,20 @@ for i in range(len(matches) // 10):
         edit_operation = check_edit(s1, Candidate_list[j])
         if distance == 1:
             if edit_operation == 'ins':
-                letter = ins_edit_distance(s1, Candidate_list[j])
-                if letter is not None:
-                    print(letter)
-                    # d = ins_confusion(letter)
-                    # print(d)
+                Noisy = ins_edit_distance(s1, Candidate_list[j])
+                if Noisy != 0 and Noisy is not None:
+                    print(Noisy)
             elif edit_operation == 'del':
-                letter = del_edit_distance(s1, Candidate_list[j])
-                if letter is not None:
-                    print(letter)
+                Noisy = del_edit_distance(s1, Candidate_list[j])
+                if Noisy != 0 and Noisy is not None:
+                    print(Noisy)
             elif edit_operation == 'sub':
-                letter = sub_edit_distance(s1, Candidate_list[j])
-                if letter is not None:
-                    print(letter)
+                Noisy = sub_edit_distance(s1, Candidate_list[j])
+                if Noisy != 0 and Noisy is not None:
+                    print(Noisy)
             elif edit_operation == 'trans':
-                letter = trans_edit_distance(s1, Candidate_list[j])
-                if letter is not None:
-                    print(letter)
+                Noisy = trans_edit_distance(s1, Candidate_list[j])
+                if Noisy != 0 and Noisy is not None:
+                    print(Noisy)
             else:
                 pass
