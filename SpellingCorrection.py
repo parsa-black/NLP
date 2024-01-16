@@ -166,6 +166,6 @@ elif edit_op == 'del':
 elif edit_op == 'sub':
     print(sub_edit_distance(s1, s2))
 elif edit_op == 'trans':
-    print(trans_edit_distance(s1,s2))
+    print(trans_edit_distance(s1, s2))
 else:
     pass
