@@ -2,12 +2,19 @@ from collections import Counter
 # nltk.download('punkt')
 import enchant
 import re
+import ast
 
 # Initialization
 data_path = 'DataSets/SpellingCorrection/DataSet/Dataset.data'
 misspelled_path = 'DataSets/SpellingCorrection/Dictionary/Text_with_Misspelling.data'
 dictionary_path = 'DataSets/SpellingCorrection/Dictionary/dictionary.data'
+ins_path = 'DataSets/SpellingCorrection/Confusion Matrix/ins-confusion.data'
+del_path = 'DataSets/SpellingCorrection/Confusion Matrix/del-confusion.data'
+sub_path = 'DataSets/SpellingCorrection/Confusion Matrix/sub-confusion.data'
+trans_path = 'DataSets/SpellingCorrection/Confusion Matrix/Transposition-confusion.data'
 lan = enchant.Dict("en_US")
+
+
 # lan.check('Hello')
 # lan.suggest('Hello')
 
@@ -57,7 +64,6 @@ def modify_values(value):
 for key, value in unigram.items():
     unigram[key] = modify_values(value)
 
-
 # Misspelling word
 with open(misspelled_path, 'r', encoding='utf-8') as file:
     misspelled_data = file.read()
@@ -67,7 +73,7 @@ matches = pattern.findall(misspelled_data)
 
 
 # Check Method
-def check_edit(str1, str2):     # str1 = Error, str2 = Candidate Correction
+def check_edit(str1, str2):  # str1 = Error, str2 = Candidate Correction
     if len(str1) > len(str2):
         return 'ins'
     elif len(str1) < len(str2):
@@ -87,85 +93,119 @@ def check_edit(str1, str2):     # str1 = Error, str2 = Candidate Correction
         pass
 
 
+# Read the ins matrix from the file
+with open(ins_path, 'r') as file:
+    ins_data = file.read()
+
+ins_dict = ast.literal_eval(ins_data)
+
+
 # Insertion Confusion Matrix
-def ins_edit_distance(str1, str2):      # str1 = Error, str2 = Candidate Correction
+def ins_edit_distance(str1, str2):  # str1 = Error, str2 = Candidate Correction
     letter = ''
     for i, (char1, char2) in enumerate(zip(str1, str2)):
         if char1 != char2:
             # Return both char1 and str1[-1] during an insertion
-            let = str1[i-1] if i > 0 else str1[-1]
+            let = str1[i - 1] if i > 0 else str1[-1]
             letter += let
             letter += char1
-            return letter
+        if letter in ins_dict:
+            return ins_dict[letter]
+
+
+# Read the del matrix from the file
+with open(del_path, 'r') as file:
+    del_data = file.read()
+
+del_dict = ast.literal_eval(del_data)
 
 
 # Deletion Confusion Matrix
-def del_edit_distance(str1, str2):      # str1 = Error, str2 = Candidate Correction
+def del_edit_distance(str1, str2):  # str1 = Error, str2 = Candidate Correction
     letter = ''
     for i, (char1, char2) in enumerate(zip(str1, str2)):
         if char1 != char2:
             # Return both char2 and str2[char2-1] during a deletion
-            let = str2[i-1] if i > 0 else str2[-1]
+            let = str2[i - 1] if i > 0 else str2[-1]
             letter += let
             letter += char2
-            return letter
+        if letter in del_dict:
+            return del_dict[letter]
+
+
+# Read the sub matrix from the file
+with open(sub_path, 'r') as file:
+    sub_data = file.read()
+
+sub_dict = ast.literal_eval(sub_data)
 
 
 # Substitution Confusion Matrix
-def sub_edit_distance(str1, str2):     # str1 = Error, str2 = Candidate Correction
+def sub_edit_distance(str1, str2):  # str1 = Error, str2 = Candidate Correction
     letter = ''
     for char1, char2 in zip(str1, str2):
         if char1 != char2:
             letter += char1
             letter += char2
-            return letter
+        if letter in sub_dict:
+            return sub_dict[letter]
+
+
+# Read the sub matrix from the file
+with open(trans_path, 'r') as file:
+    tran_data = file.read()
+
+trans_dict = ast.literal_eval(tran_data)
 
 
 # Transposition Confusion Matrix
-def trans_edit_distance(str1, str2):     # str1 = Error, str2 = Candidate Correction
+def trans_edit_distance(str1, str2):  # str1 = Error, str2 = Candidate Correction
     letter = ''
     for char1, char2 in zip(str1, str2):
         if char1 != char2:
             letter += char2
             letter += char1
-            return letter
+        if letter in trans_dict:
+            return trans_dict[letter]
 
 
 # print Errors
-# for targ, word in matches:
-#     print(f'Error: {word}')
+for targ, word in matches:
+    print(f'Error: {word}')
 
 
-# def clean_word(word):
-#     # Remove leading and trailing whitespaces
-#     return word.strip()
-#
-#
-# for i in range(len(matches)//10):
-#     s1 = clean_word(matches[i][1])
-#     s2 = clean_word(matches[i][0])
-#     Candidate_list = lan.suggest(s1)
-#     print(matches[i])
-#     for j in range(len(Candidate_list)):
-#         Candidate_list[j] = Candidate_list[j].lower()
-#         distance = damerau_levenshtein_distance(s1, Candidate_list[j])
-#         edit_operation = check_edit(s1, Candidate_list[j])
-#         if distance == 1:
-#             print(f"Levenshtein distance between '{s1}' and '{Candidate_list[j]}': {distance} and
-#             op: {edit_operation}")
+def clean_word(word):
+    # Remove leading and trailing whitespaces
+    return word.strip()
 
-# str1 = Error, str2 = Candidate Correction
-s1 = 'acress'
-s2 = 'caress'
 
-edit_op = check_edit(s1, s2)
-if edit_op == 'ins':
-    print(ins_edit_distance(s1, s2))
-elif edit_op == 'del':
-    print(del_edit_distance(s1, s2))
-elif edit_op == 'sub':
-    print(sub_edit_distance(s1, s2))
-elif edit_op == 'trans':
-    print(trans_edit_distance(s1, s2))
-else:
-    pass
+for i in range(len(matches) // 10):
+    s1 = clean_word(matches[i][1])
+    s2 = clean_word(matches[i][0])
+    Candidate_list = lan.suggest(s1)
+    print(matches[i])
+    for j in range(len(Candidate_list)):
+        Candidate_list[j] = Candidate_list[j].lower()
+        distance = damerau_levenshtein_distance(s1, Candidate_list[j])
+        edit_operation = check_edit(s1, Candidate_list[j])
+        if distance == 1:
+            if edit_operation == 'ins':
+                letter = ins_edit_distance(s1, Candidate_list[j])
+                if letter is not None:
+                    print(letter)
+                    # d = ins_confusion(letter)
+                    # print(d)
+            elif edit_operation == 'del':
+                letter = del_edit_distance(s1, Candidate_list[j])
+                if letter is not None:
+                    print(letter)
+            elif edit_operation == 'sub':
+                letter = sub_edit_distance(s1, Candidate_list[j])
+                if letter is not None:
+                    print(letter)
+            elif edit_operation == 'trans':
+                letter = trans_edit_distance(s1, Candidate_list[j])
+                if letter is not None:
+                    print(letter)
+            else:
+                pass
