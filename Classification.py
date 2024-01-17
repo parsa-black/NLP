@@ -90,6 +90,8 @@ Talk_V = len(Talk_Dict)
 # Laplace Smoothing
 apply_laplace_smoothing(Talk_Dict, Talk_Count, Talk_V)
 
+Count_V = len(Talk_Dict) + len(Soc_Dict) + len(Sci_Dict) + len(Rec_Dict) + len(Comp_Dict)
+
 class_dicts = {
     "Comp": Comp_Dict,
     "Rec": Rec_Dict,
@@ -107,11 +109,11 @@ class_counts = {
 }
 
 class_V = {
-    "Comp": Comp_V,
-    "Rec": Rec_V,
-    "Sci": Sci_V,
-    "Soc": Soc_V,
-    "Talk": Talk_V
+    "Comp": Count_V,
+    "Rec": Count_V,
+    "Sci": Count_V,
+    "Soc": Count_V,
+    "Talk": Count_V
 }
 
 class_doc = {
@@ -192,8 +194,8 @@ def find_max_probability(probabilities):
     return max_class
 
 
-# for class_name, log_probability in ts8750_prob.items():
-#     print(f"{class_name}: {log_probability}")
+for class_name, log_probability in ts8750_prob.items():
+    print(f"{class_name}: {log_probability}")
 
 # Accuracy
 Test_set_Name = [ts480_prob, ts488_prob, ts3982_prob, ts3992_prob, ts4011_prob, ts6990_prob, ts6993_prob, ts7016_prob,
