@@ -76,6 +76,7 @@ distinct_word_count = len(unique_words)
 
 # Calculate unigram probabilities
 def modify_values(value):
+    value += 1
     return value / total_length + distinct_word_count
 
 
@@ -197,11 +198,6 @@ def calculate_noisy_probability(edit_operation, str1, str2):
         return trans_edit_distance(str1, str2)
     else:
         return None
-
-
-# print Errors
-# for targ, word in matches:
-#     print(f'Error: {word}')
 
 
 def clean_word(word):
