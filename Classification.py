@@ -214,7 +214,6 @@ for i in range(total_test_instances):
 
 accuracy = correct_predictions / total_test_instances
 
-
 # Print the result
 print("Classification:")
 print("Test480 :", find_max_probability(ts480_prob))
