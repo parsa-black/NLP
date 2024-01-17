@@ -114,17 +114,17 @@ class_V = {
     "Talk": Talk_V
 }
 
-total_docs = {
-    "Comp": 8,
-    "Rec": 15,
-    "Sci": 14,
-    "Soc": 27,
-    "Talk": 30
+class_doc = {
+    "Comp": 8 / 94,
+    "Rec": 15 / 94,
+    "Sci": 14 / 94,
+    "Soc": 27 / 94,
+    "Talk": 30 / 94
 }
 
 
 # Test-set
-def classify_test_set(test_set_path, classes_dicts, classes_count, classes_v, total_docs):
+def classify_test_set(test_set_path, classes_dicts, classes_count, classes_v, class_docs):
     with open(test_set_path, 'r', encoding='utf-8') as file:
         test_content = file.read()
         test_words = preprocess_text(test_content)
@@ -132,13 +132,13 @@ def classify_test_set(test_set_path, classes_dicts, classes_count, classes_v, to
     total_log_probability = defaultdict(float)
 
     for class_name, class_dict in classes_dicts.items():
-        class_log_probability = math.log(classes_count[class_name] / total_docs)
-
+        class_log_probability = math.log(class_docs[class_name])
         for word in test_words:
             if word in class_dict:
-                # Multiply the probabilities using logarithms
+                # Sum the logarithms of probabilities
                 class_log_probability += math.log(class_dict[word])
             else:
+                # Add Laplace smoothing term for unseen words
                 class_log_probability += math.log(1 / (classes_count[class_name] + classes_v[class_name]))
 
         total_log_probability[class_name] = class_log_probability
@@ -165,25 +165,24 @@ ts9905_path = 'DataSets/Classification-Train And Test/talk.politics.mideast/test
 ts9906_path = 'DataSets/Classification-Train And Test/talk.politics.mideast/test/data9906.txt'
 ts9910_path = 'DataSets/Classification-Train And Test/talk.politics.mideast/test/data9910.txt'
 
-
 # Classify test sets
-ts480_prob = classify_test_set(ts480_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts488_prob = classify_test_set(ts488_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts3982_prob = classify_test_set(ts3982_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts3992_prob = classify_test_set(ts3992_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts4011_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts6990_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts6993_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts7016_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts8750_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts8752_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts8762_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts8770_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts9891_prob = classify_test_set(ts9891_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts9899_prob = classify_test_set(ts9899_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts9905_prob = classify_test_set(ts9905_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts9906_prob = classify_test_set(ts9906_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-ts9910_prob = classify_test_set(ts9910_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts480_prob = classify_test_set(ts480_path, class_dicts, class_counts, class_V, class_doc)
+ts488_prob = classify_test_set(ts488_path, class_dicts, class_counts, class_V, class_doc)
+ts3982_prob = classify_test_set(ts3982_path, class_dicts, class_counts, class_V, class_doc)
+ts3992_prob = classify_test_set(ts3992_path, class_dicts, class_counts, class_V, class_doc)
+ts4011_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, class_doc)
+ts6990_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, class_doc)
+ts6993_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, class_doc)
+ts7016_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, class_doc)
+ts8750_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, class_doc)
+ts8752_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, class_doc)
+ts8762_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, class_doc)
+ts8770_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, class_doc)
+ts9891_prob = classify_test_set(ts9891_path, class_dicts, class_counts, class_V, class_doc)
+ts9899_prob = classify_test_set(ts9899_path, class_dicts, class_counts, class_V, class_doc)
+ts9905_prob = classify_test_set(ts9905_path, class_dicts, class_counts, class_V, class_doc)
+ts9906_prob = classify_test_set(ts9906_path, class_dicts, class_counts, class_V, class_doc)
+ts9910_prob = classify_test_set(ts9910_path, class_dicts, class_counts, class_V, class_doc)
 
 
 # Function to find the class with the maximum probability
@@ -192,12 +191,32 @@ def find_max_probability(probabilities):
     max_probability = probabilities[max_class]
     return max_class
 
+
 # for class_name, log_probability in ts8750_prob.items():
 #     print(f"{class_name}: {log_probability}")
 
+# Accuracy
+Test_set_Name = [ts480_prob, ts488_prob, ts3982_prob, ts3992_prob, ts4011_prob, ts6990_prob, ts6993_prob, ts7016_prob,
+                 ts8750_prob, ts8752_prob, ts8762_prob, ts8770_prob, ts9891_prob, ts9899_prob, ts9905_prob,
+                 ts9905_prob, ts9910_prob]
+Test_set_Class = ['Comp', 'Comp', 'Rec', 'Rec', 'Rec', 'Sci', 'Sci', 'Sci', 'Soc', 'Soc', 'Soc', 'Soc', 'Talk', 'Talk',
+                  'Talk', 'Talk', 'Talk']
+
+correct_predictions = 0
+total_test_instances = len(Test_set_Name)
+
+for i in range(total_test_instances):
+    predicted_label = find_max_probability(Test_set_Name[i])
+    actual_label = Test_set_Class[i]
+
+    if predicted_label == actual_label:
+        correct_predictions += 1
+
+accuracy = correct_predictions / total_test_instances
+
 
 # Print the result
-print("Test set classification result:")
+print("Classification:")
 print("Test480 :", find_max_probability(ts480_prob))
 print('-' * 50)
 print("Test488 :", find_max_probability(ts488_prob))
@@ -232,3 +251,5 @@ print("Test9906 :", find_max_probability(ts9906_prob))
 print('-' * 50)
 print("Test9910 :", find_max_probability(ts9910_prob))
 
+# Print Accuracy
+print(f"\nAccuracy: {accuracy * 100:.2f}%")
