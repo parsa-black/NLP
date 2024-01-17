@@ -67,8 +67,6 @@ stemmer = PorterStemmer()
 
 singles = [stemmer.stem(token) for token in tokens]
 
-# print(singles)
-
 
 while True:
     display_menu()
