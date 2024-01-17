@@ -1,6 +1,7 @@
 import glob
 import string
 from collections import defaultdict
+import math
 
 
 def preprocess_text(text):
@@ -27,7 +28,6 @@ def get_total_word_dictionary(folder_path):
             file_dictionary = create_word_dictionary(file_content)
             for word, count in file_dictionary.items():
                 total_word_dictionary[word] += count
-
     return total_word_dictionary
 
 
@@ -39,7 +39,6 @@ def get_total_word_count(folder_path):
             file_content = file.read()
             words = preprocess_text(file_content)
             total_word_count += len(words)
-
     return total_word_count
 
 
@@ -47,7 +46,7 @@ def apply_laplace_smoothing(word_dict, word_count, v):
     for word in word_dict:
         # Add Laplace smoothing term to the numerator
         word_dict[word] += 1
-        # Add Laplace smoothing term to the denominator
+        # Multiply by Laplace smoothing term in the denominator
         word_dict[word] /= (word_count + v)
 
 
@@ -91,30 +90,6 @@ Talk_V = len(Talk_Dict)
 # Laplace Smoothing
 apply_laplace_smoothing(Talk_Dict, Talk_Count, Talk_V)
 
-
-# Test-set
-def classify_test_set(test_set_path, classes_dicts, classes_count, classes_v, total_docs):
-    with open(test_set_path, 'r', encoding='utf-8') as file:
-        test_content = file.read()
-        test_words = preprocess_text(test_content)
-
-    total_probability = defaultdict(float)
-
-    for word in test_words:
-        for class_name, class_dict in classes_dicts.items():
-            if word in class_dict:
-                probability = class_dict[word]
-            else:
-                probability = 1 / (classes_count[class_name] + classes_v[class_name])
-            total_probability[class_name] += probability
-
-    # Calculate class | document probabilities
-    for class_name, class_count in classes_count.items():
-        total_probability[class_name] += class_count / total_docs
-
-    return total_probability
-
-
 class_dicts = {
     "Comp": Comp_Dict,
     "Rec": Rec_Dict,
@@ -147,29 +122,56 @@ total_docs = {
     "Talk": 30
 }
 
+
+# Test-set
+def classify_test_set(test_set_path, classes_dicts, classes_count, classes_v, total_docs):
+    with open(test_set_path, 'r', encoding='utf-8') as file:
+        test_content = file.read()
+        test_words = preprocess_text(test_content)
+
+    total_log_probability = defaultdict(float)
+
+    for class_name, class_dict in classes_dicts.items():
+        class_log_probability = math.log(classes_count[class_name] / total_docs)
+
+        for word in test_words:
+            if word in class_dict:
+                # Multiply the probabilities using logarithms
+                class_log_probability += math.log(class_dict[word])
+            else:
+                class_log_probability += math.log(1 / (classes_count[class_name] + classes_v[class_name]))
+
+        total_log_probability[class_name] = class_log_probability
+
+    return total_log_probability
+
+
+# Test-set paths
 ts480_path = 'DataSets/Classification-Train And Test/Comp.graphics/test/data480.txt'
-ts480_prob = classify_test_set(ts480_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-
 ts488_path = 'DataSets/Classification-Train And Test/Comp.graphics/test/data488.txt'
-ts488_prob = classify_test_set(ts488_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-
 ts3982_path = 'DataSets/Classification-Train And Test/rec.autos/test/data3982.txt'
-ts3982_prob = classify_test_set(ts3982_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
-
 ts3992_path = 'DataSets/Classification-Train And Test/rec.autos/test/data3992.txt'
-ts3992_prob = classify_test_set(ts3982_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+
+# Classify test sets
+ts480_prob = classify_test_set(ts480_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts488_prob = classify_test_set(ts488_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts3982_prob = classify_test_set(ts3982_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts3992_prob = classify_test_set(ts3992_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+
+
+# Function to find the class with the maximum probability
+def find_max_probability(probabilities):
+    max_class = max(probabilities, key=probabilities.get)
+    max_probability = probabilities[max_class]
+    return max_class
 
 
 # Print the result
-print("Test set classification probabilities:")
-for class_name, probability in ts480_prob.items():
-    print(f"{class_name}: {probability}")
+print("Test set classification result:")
+print("Test480 :", find_max_probability(ts480_prob))
 print('-' * 50)
-for class_name, probability in ts488_prob.items():
-    print(f"{class_name}: {probability}")
+print("Test488 :", find_max_probability(ts488_prob))
 print('-' * 50)
-for class_name, probability in ts3982_prob.items():
-    print(f"{class_name}: {probability}")
+print("Test3982 :", find_max_probability(ts3982_prob))
 print('-' * 50)
-for class_name, probability in ts3992_prob.items():
-    print(f"{class_name}: {probability}")
+print("Test3992 :", find_max_probability(ts3992_prob))
