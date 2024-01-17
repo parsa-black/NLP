@@ -151,12 +151,39 @@ ts480_path = 'DataSets/Classification-Train And Test/Comp.graphics/test/data480.
 ts488_path = 'DataSets/Classification-Train And Test/Comp.graphics/test/data488.txt'
 ts3982_path = 'DataSets/Classification-Train And Test/rec.autos/test/data3982.txt'
 ts3992_path = 'DataSets/Classification-Train And Test/rec.autos/test/data3992.txt'
+ts4011_path = 'DataSets/Classification-Train And Test/rec.autos/test/data4011.txt'
+ts6990_path = 'DataSets/Classification-Train And Test/sci.electronics/test/data6990.txt'
+ts6993_path = 'DataSets/Classification-Train And Test/sci.electronics/test/data6993.txt'
+ts7016_path = 'DataSets/Classification-Train And Test/sci.electronics/test/data7016.txt'
+ts8750_path = 'DataSets/Classification-Train And Test/soc.religion.christian/test/data8750.txt'
+ts8752_path = 'DataSets/Classification-Train And Test/soc.religion.christian/test/data8752.txt'
+ts8762_path = 'DataSets/Classification-Train And Test/soc.religion.christian/test/data8762.txt'
+ts8770_path = 'DataSets/Classification-Train And Test/soc.religion.christian/test/data8770.txt'
+ts9891_path = 'DataSets/Classification-Train And Test/talk.politics.mideast/test/data9891.txt'
+ts9899_path = 'DataSets/Classification-Train And Test/talk.politics.mideast/test/data9899.txt'
+ts9905_path = 'DataSets/Classification-Train And Test/talk.politics.mideast/test/data9905.txt'
+ts9906_path = 'DataSets/Classification-Train And Test/talk.politics.mideast/test/data9906.txt'
+ts9910_path = 'DataSets/Classification-Train And Test/talk.politics.mideast/test/data9910.txt'
+
 
 # Classify test sets
 ts480_prob = classify_test_set(ts480_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
 ts488_prob = classify_test_set(ts488_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
 ts3982_prob = classify_test_set(ts3982_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
 ts3992_prob = classify_test_set(ts3992_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts4011_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts6990_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts6993_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts7016_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts8750_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts8752_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts8762_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts8770_prob = classify_test_set(ts4011_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts9891_prob = classify_test_set(ts9891_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts9899_prob = classify_test_set(ts9899_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts9905_prob = classify_test_set(ts9905_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts9906_prob = classify_test_set(ts9906_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
+ts9910_prob = classify_test_set(ts9910_path, class_dicts, class_counts, class_V, sum(total_docs.values()))
 
 
 # Function to find the class with the maximum probability
@@ -164,6 +191,9 @@ def find_max_probability(probabilities):
     max_class = max(probabilities, key=probabilities.get)
     max_probability = probabilities[max_class]
     return max_class
+
+# for class_name, log_probability in ts8750_prob.items():
+#     print(f"{class_name}: {log_probability}")
 
 
 # Print the result
@@ -175,3 +205,30 @@ print('-' * 50)
 print("Test3982 :", find_max_probability(ts3982_prob))
 print('-' * 50)
 print("Test3992 :", find_max_probability(ts3992_prob))
+print('-' * 50)
+print("Test4011 :", find_max_probability(ts4011_prob))
+print('-' * 50)
+print("Test6990 :", find_max_probability(ts6990_prob))
+print('-' * 50)
+print("Test6993 :", find_max_probability(ts6993_prob))
+print('-' * 50)
+print("Test7016 :", find_max_probability(ts7016_prob))
+print('-' * 50)
+print("Test8750 :", find_max_probability(ts8750_prob))
+print('-' * 50)
+print("Test8752 :", find_max_probability(ts8752_prob))
+print('-' * 50)
+print("Test8762 :", find_max_probability(ts8762_prob))
+print('-' * 50)
+print("Test8770 :", find_max_probability(ts8770_prob))
+print('-' * 50)
+print("Test9891 :", find_max_probability(ts9891_prob))
+print('-' * 50)
+print("Test9899 :", find_max_probability(ts9899_prob))
+print('-' * 50)
+print("Test9905 :", find_max_probability(ts9905_prob))
+print('-' * 50)
+print("Test9906 :", find_max_probability(ts9906_prob))
+print('-' * 50)
+print("Test9910 :", find_max_probability(ts9910_prob))
+
