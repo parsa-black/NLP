@@ -194,8 +194,8 @@ def find_max_probability(probabilities):
     return max_class
 
 
-for class_name, log_probability in ts8750_prob.items():
-    print(f"{class_name}: {log_probability}")
+# for class_name, log_probability in ts8750_prob.items():
+#     print(f"{class_name}: {log_probability}")
 
 # Accuracy
 Test_set_Name = [ts480_prob, ts488_prob, ts3982_prob, ts3992_prob, ts4011_prob, ts6990_prob, ts6993_prob, ts7016_prob,
@@ -218,39 +218,10 @@ accuracy = correct_predictions / total_test_instances
 
 # Print the result
 print("Classification:")
-print("Test480 :", find_max_probability(ts480_prob))
-print('-' * 50)
-print("Test488 :", find_max_probability(ts488_prob))
-print('-' * 50)
-print("Test3982 :", find_max_probability(ts3982_prob))
-print('-' * 50)
-print("Test3992 :", find_max_probability(ts3992_prob))
-print('-' * 50)
-print("Test4011 :", find_max_probability(ts4011_prob))
-print('-' * 50)
-print("Test6990 :", find_max_probability(ts6990_prob))
-print('-' * 50)
-print("Test6993 :", find_max_probability(ts6993_prob))
-print('-' * 50)
-print("Test7016 :", find_max_probability(ts7016_prob))
-print('-' * 50)
-print("Test8750 :", find_max_probability(ts8750_prob))
-print('-' * 50)
-print("Test8752 :", find_max_probability(ts8752_prob))
-print('-' * 50)
-print("Test8762 :", find_max_probability(ts8762_prob))
-print('-' * 50)
-print("Test8770 :", find_max_probability(ts8770_prob))
-print('-' * 50)
-print("Test9891 :", find_max_probability(ts9891_prob))
-print('-' * 50)
-print("Test9899 :", find_max_probability(ts9899_prob))
-print('-' * 50)
-print("Test9905 :", find_max_probability(ts9905_prob))
-print('-' * 50)
-print("Test9906 :", find_max_probability(ts9906_prob))
-print('-' * 50)
-print("Test9910 :", find_max_probability(ts9910_prob))
+for i, test_set_prob in enumerate(Test_set_Name):
+    test_set_name = f"Test{i + 1:02d}"
+    print(f"{test_set_name} : {find_max_probability(test_set_prob)}")
+    print('-' * 50)
 
 # Print Accuracy
 print(f"\nAccuracy: {accuracy * 100:.2f}%")
